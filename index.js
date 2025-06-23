@@ -1,3 +1,4 @@
+const { createServer } = require("http");
 const { addonBuilder } = require("stremio-addon-sdk");
 
 const manifest = {
@@ -13,9 +14,12 @@ const manifest = {
 };
 
 const builder = new addonBuilder(manifest);
-
 builder.defineCatalogHandler(() => {
   return Promise.resolve({ metas: [] });
 });
 
-module.exports = builder.getInterface();
+const interface = builder.getInterface();
+
+module.exports = (req, res) => {
+  interface(req, res);
+};
