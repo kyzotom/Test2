@@ -1,36 +1,22 @@
-const app = require("express")();
-const port = process.env.PORT || 3000;
-const addonInterface = builder.getInterface();
+const { addonBuilder } = require("stremio-addon-sdk");
 
-app.get("/manifest.json", (req, res) => {
-    res.setHeader("Content-Type", "application/json");
-    res.send(addonInterface.manifest);
+const manifest = {
+  id: "org.streamuj.mini",
+  version: "1.0.0",
+  name: "Mini Streamuj Addon",
+  description: "Testovaci addon pre nasadenie",
+  types: ["movie"],
+  idPrefixes: ["tt"],
+  catalogs: [],
+  resources: ["catalog"],
+  contactEmail: "tvoj@email.com"
+};
+
+const builder = new addonBuilder(manifest);
+
+// Dummy katalog handler (aj keď prázdny, musí byť definovaný)
+builder.defineCatalogHandler(() => {
+  return Promise.resolve({ metas: [] });
 });
 
-app.get("/:resource/:type/:id/:extra?.json?", async (req, res) => {
-    res.setHeader("Content-Type", "application/json");
-    const { resource, type, id } = req.params;
-    const extra = req.query;
-
-    const handler = addonInterface.get(resource);
-    if (handler) {
-        try {
-            const result = await handler({ type, id, extra });
-            res.send(result);
-        } catch (err) {
-            res.status(500).send({ err: err.message });
-        }
-    } else {
-        res.status(404).send({ err: "Not found" });
-    }
-});
-
-// 🟢 Tento riadok je pre lokálne testovanie
-if (require.main === module) {
-    app.listen(port, () => {
-        console.log(`Addon listening on port ${port}`);
-    });
-}
-
-// 🟢 Tento riadok je pre Vercel
-module.exports = app; // ← NESMIE chýbať!
+module.exports = builder.getInterface();
