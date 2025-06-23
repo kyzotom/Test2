@@ -10,7 +10,7 @@ const manifest = {
   idPrefixes: ["tt"],
   catalogs: [],
   resources: ["catalog"],
-  contactEmail: "tvoj@email.com"
+  contactEmail: "kyzotom@gmail.com"
 };
 
 const builder = new addonBuilder(manifest);
