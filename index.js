@@ -18,8 +18,8 @@ builder.defineCatalogHandler(() => {
   return Promise.resolve({ metas: [] });
 });
 
-const interface = builder.getInterface();
+const addonInterface = builder.getInterface();
 
 module.exports = (req, res) => {
-  interface(req, res);
+  addonInterface(req, res);
 };
