@@ -1,4 +1,3 @@
-const { createServer } = require("http");
 const { addonBuilder } = require("stremio-addon-sdk");
 
 const manifest = {
@@ -13,13 +12,21 @@ const manifest = {
   contactEmail: "kyzotom@gmail.com"
 };
 
-const builder = new addonBuilder(manifest);
+// SPRÁVNE: BEZ `new` pre SDK 1.6.x
+const builder = addonBuilder(manifest);
+
 builder.defineCatalogHandler(() => {
   return Promise.resolve({ metas: [] });
 });
 
-const addonInterface = builder.getInterface();
-
+// Funkcia handler pre Vercel
 module.exports = (req, res) => {
-  addonInterface(req, res);
+  // CORS pre Stremio (nutné pre manifest!)
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  if (req.method === "OPTIONS") return res.end();
+
+  // Volaj Stremio handler
+  builder.getInterface()(req, res);
 };
