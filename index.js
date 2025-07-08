@@ -12,21 +12,22 @@ const manifest = {
   contactEmail: "kyzotom@gmail.com"
 };
 
-// SPRÁVNE: BEZ `new` pre SDK 1.6.x
 const builder = addonBuilder(manifest);
 
 builder.defineCatalogHandler(() => {
   return Promise.resolve({ metas: [] });
 });
 
-// Funkcia handler pre Vercel
+const interface = builder.getInterface();
+
+// SPRÁVNY serverless handler pre Vercel + Stremio SDK >=1.6.x:
 module.exports = (req, res) => {
-  // CORS pre Stremio (nutné pre manifest!)
+  // CORS headers (potrebné pre Stremio)
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   if (req.method === "OPTIONS") return res.end();
 
-  // Volaj Stremio handler
-  builder.getInterface()(req, res);
+  // Hlavná vec: interface je OBJEKT s .requestHandler!
+  return interface.requestHandler(req, res);
 };
