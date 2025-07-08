@@ -20,14 +20,17 @@ builder.defineCatalogHandler(() => {
 
 const interface = builder.getInterface();
 
-// SPRÁVNY serverless handler pre Vercel + Stremio SDK >=1.6.x:
+console.log("✅ Addon štartuje...");
+
 module.exports = (req, res) => {
-  // CORS headers (potrebné pre Stremio)
+  console.log(`🌍 [${new Date().toISOString()}] Požiadavka na ${req.url} [${req.method}]`);
+
+  // CORS pre Stremio
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   if (req.method === "OPTIONS") return res.end();
 
-  // Hlavná vec: interface je OBJEKT s .requestHandler!
+  // Pre nové SDK (1.6.x+)
   return interface.requestHandler(req, res);
 };
