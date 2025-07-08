@@ -32,5 +32,5 @@ module.exports = (req, res) => {
   if (req.method === "OPTIONS") return res.end();
 
   // Pre nové SDK (1.6.x+)
-  return interface.requestHandler(req, res);
+  return interface(req, res);
 };
