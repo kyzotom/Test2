@@ -1,36 +1,39 @@
 const { addonBuilder } = require("stremio-addon-sdk");
+const axios = require("axios");
+const cheerio = require("cheerio");
 
 const manifest = {
-  id: "org.streamuj.mini",
-  version: "1.0.0",
-  name: "Mini Streamuj Addon",
-  description: "Testovací addon pre nasadenie",
+  id: "org.streamuj.tv",
+  version: "1.2.0",
+  name: "StreamujTV (Sosac) Premium",
+  description: "Addon pre prehrávanie streamuj.tv (Sosáč) podľa titulov z TMDB/Cinemeta",
+  catalogs: [
+    {
+      type: "movie",
+      id: "streamuj-catalog",
+      name: "Streamuj.tv",
+      extra: [{ name: "search" }]
+    }
+  ],
+  resources: ["stream"],
   types: ["movie"],
-  idPrefixes: ["tt"],
-  catalogs: [],
-  resources: ["catalog"],
-  contactEmail: "kyzotom@gmail.com"
+  idPrefixes: ["tt"]
 };
 
-const builder = addonBuilder(manifest);
+const builder = new addonBuilder(manifest);
 
-builder.defineCatalogHandler(() => {
-  return Promise.resolve({ metas: [] });
+builder.defineStreamHandler(async ({ id }) => {
+  try {
+    // Simpel stream test
+    return {
+      streams: [{
+        title: "Test Stream",
+        url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+      }]
+    };
+  } catch (e) {
+    return { streams: [] };
+  }
 });
 
-const interface = builder.getInterface();
-
-console.log("✅ Addon štartuje...");
-
-module.exports = (req, res) => {
-  console.log(`🌍 [${new Date().toISOString()}] Požiadavka na ${req.url} [${req.method}]`);
-
-  // CORS pre Stremio
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  if (req.method === "OPTIONS") return res.end();
-
-  // Pre nové SDK (1.6.x+)
-  return interface(req, res);
-};
+module.exports = builder.getInterface();
