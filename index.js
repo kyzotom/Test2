@@ -20,7 +20,7 @@ const manifest = {
   idPrefixes: ["tt"]
 };
 
-const builder = new addonBuilder(manifest);
+const builder = addonBuilder(manifest);
 
 // Oprava: pridať catalog handler!
 builder.defineCatalogHandler((args) => {
