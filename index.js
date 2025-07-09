@@ -15,12 +15,18 @@ const manifest = {
       extra: [{ name: "search" }]
     }
   ],
-  resources: ["stream"],
+  resources: ["catalog", "stream"], // POZOR: musí tu byť aj "catalog"
   types: ["movie"],
   idPrefixes: ["tt"]
 };
 
 const builder = new addonBuilder(manifest);
+
+// Oprava: pridať catalog handler!
+builder.defineCatalogHandler((args) => {
+  // Pre test prázdny katalóg, neskôr môžeš vrátiť filmy podľa args.extra.search
+  return Promise.resolve({ metas: [] });
+});
 
 builder.defineStreamHandler(async ({ id }) => {
   try {
